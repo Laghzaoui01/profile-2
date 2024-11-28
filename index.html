@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Animation with LinkedIn Button</title>
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --dark-text: #00ff00;
+            --light-bg: #ffffff;
+            --light-text: #000000;
+            --button-bg: #0e76a8;
+            --button-text: #ffffff;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .terminal {
+            width: 80%;
+            max-width: 800px;
+            min-height: 60vh;
+            background-color: var(--dark-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            color: var(--dark-text);
+            font-size: 20px;
+            line-height: 1.6;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .terminal__line {
+            margin: 10px 0;
+        }
+
+        .terminal__prompt {
+            color: var(--dark-text);
+            font-weight: bold;
+        }
+
+        .terminal__typed-text {
+            color: var(--dark-text);
+            display: inline-block;
+        }
+
+        .terminal__cursor {
+            display: inline-block;
+            width: 0.7em;
+            height: 1.4em;
+            background-color: var(--dark-text);
+            animation: blink 0.8s step-end infinite;
+            margin-left: 0.1em;
+        }
+
+        .linkedin-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .linkedin-button:hover {
+            background-color: #00ff00;
+        }
+
+        /* Dark/Light theme styles */
+        body.light-mode {
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+
+        body.light-mode .terminal {
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+
+        body.light-mode .terminal__cursor {
+            background-color: var(--light-text);
+        }
+
+        body.light-mode .linkedin-button {
+            background-color: #04c40a;
+            color: #ffffff;
+        }
+
+        /* Animation for typing effect */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="terminal__line">
+            <span class="terminal__prompt" aria-hidden="true">mohamed@laghzaoui:~$</span>
+            <div class="terminal__typed-text" id="typed-text"></div>
+            <span class="terminal__cursor" id="cursor"></span>
+        </div>
+        <div class="terminal__line" id="contact-info" style="display: none;">
+            <span class="terminal__prompt" aria-hidden="true">mohamed@laghzaoui:~$</span>
+            <div class="terminal__typed-text" id="contact-typed-text"></div>
+        </div>
+        <a href="https://www.linkedin.com/in/mohamed-laghzaoui-0609a4267/" 
+           target="_blank" 
+           class="linkedin-button">
+           Visit LinkedIn Profile
+        </a>
+    </div>
+
+    <script>
+        // Text for animation
+        const typedTextElement = document.getElementById('typed-text');
+        const contactTextElement = document.getElementById('contact-typed-text');
+
+        const textToType = `
+Hello! I'm Mohamed Laghzaoui.
+I specialize in Cloud Computing and web development.
+Feel free to reach out for collaborations or internships.
+`;
+
+        const contactLines = [
+            "Contact Info:",
+            "Email: laghzaouimhamad222@gmail.com",
+            "Phone: 0684399807",
+            "LinkedIn: Click the button below!"
+        ];
+
+        let currentChar = 0;
+        let currentLine = 0;
+
+        function typeText(element, text, callback) {
+            if (currentChar < text.length) {
+                element.textContent += text.charAt(currentChar);
+                currentChar++;
+                setTimeout(() => typeText(element, text, callback), Math.random() * (150 - 50) + 50);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        function typeContactText() {
+            if (currentLine < contactLines.length) {
+                const lineElement = document.createElement('div');
+                lineElement.className = 'terminal__line';
+                lineElement.innerHTML = `<span class="terminal__prompt" aria-hidden="true">mohamed@laghzaoui:~$</span>
+                <div class="terminal__typed-text"></div>`;
+                const terminal = document.querySelector('.terminal');
+                terminal.insertBefore(lineElement, terminal.querySelector('.linkedin-button'));
+
+                const typedTextDiv = lineElement.querySelector('.terminal__typed-text');
+                currentChar = 0;
+                typeText(typedTextDiv, contactLines[currentLine], () => {
+                    currentLine++;
+                    setTimeout(typeContactText, 500);
+                });
+            }
+        }
+
+        // Start typing
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                typeText(typedTextElement, textToType, () => {
+                    setTimeout(typeContactText, 1000);
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>
